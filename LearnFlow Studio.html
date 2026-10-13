@@ -1,0 +1,121 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>LearnFlow Studio</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--tx:#1b2430;--mut:#667085;--bd:#e2e6ec;--ac:#3b6fd4;--ok:#2e9d6a;--lk:#9aa4b2;--ws:#eef1f5;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#10141a;--card:#181e27;--tx:#e8ecf2;--mut:#9aa6b6;--bd:#2a3340;--ac:#6b9bf0;--ok:#4cc08a;--lk:#6d7888;--ws:#0d1117}}
+:root[data-theme=dark]{--bg:#10141a;--card:#181e27;--tx:#e8ecf2;--mut:#9aa6b6;--bd:#2a3340;--ac:#6b9bf0;--ok:#4cc08a;--lk:#6d7888;--ws:#0d1117}
+*{box-sizing:border-box}html,body{height:100%;margin:0}
+body{font:14px system-ui,'Cairo',sans-serif;background:var(--bg);color:var(--tx);display:flex;flex-direction:column;overflow:hidden}
+[dir=rtl] body,[dir=rtl] input,[dir=rtl] button,[dir=rtl] select,[dir=rtl] textarea{font-family:'Cairo',system-ui,sans-serif}
+button,input,select,textarea{font:inherit;color:inherit}
+button{background:var(--card);border:1px solid var(--bd);border-radius:8px;padding:6px 10px;cursor:pointer;min-height:34px}
+button:hover{border-color:var(--ac)}button.pri{background:var(--ac);color:#fff;border-color:var(--ac)}button.dng{color:#c0392b}
+:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+input,select,textarea{background:var(--card);border:1px solid var(--bd);border-radius:8px;padding:6px 8px;width:100%}
+#top{display:flex;gap:6px;align-items:center;padding:8px 10px;background:var(--card);border-bottom:1px solid var(--bd);flex-wrap:wrap}
+#top h1{font-size:15px;margin:0 6px;flex:1;min-width:120px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#top input{width:150px}#top select{width:auto}
+#main{flex:1;display:flex;min-height:0;position:relative}
+#side{width:250px;background:var(--card);border-inline-end:1px solid var(--bd);padding:10px;overflow:auto;flex:none}
+.brand{font-weight:700;font-size:16px;margin-bottom:8px;color:var(--ac)}
+.stat{color:var(--mut);font-size:12px;margin-bottom:10px;line-height:1.7}
+.cc{border:1px solid var(--bd);border-radius:10px;padding:8px 10px;margin-bottom:8px;cursor:pointer;border-inline-start:4px solid var(--c)}
+.cc.on{background:var(--ws)}.cc b{display:block}.cc small{color:var(--mut)}
+.bar{height:5px;background:var(--bd);border-radius:4px;margin-top:6px;overflow:hidden}.bar i{display:block;height:100%;background:var(--ok)}
+#ws{flex:1;position:relative;overflow:hidden;background:var(--ws);touch-action:none;cursor:grab;direction:ltr;background-image:radial-gradient(var(--bd) 1px,transparent 1px);background-size:20px 20px}
+#cv{position:absolute;left:0;top:0;transform-origin:0 0}
+#cv svg{position:absolute;left:0;top:0;overflow:visible;pointer-events:none}
+.node{position:absolute;width:200px;height:64px;background:var(--card);border:2px solid var(--bd);border-radius:12px;padding:8px 10px;cursor:pointer;display:flex;flex-direction:column;justify-content:center;transition:box-shadow .15s,opacity .15s}
+.node b{font-size:13px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}.node small{color:var(--mut)}
+.node.done{border-color:var(--ok)}.node.prog{border-color:var(--ac)}.node.avail{border-color:var(--ac);border-style:dashed}.node.lock{opacity:.6;border-color:var(--lk)}
+.node.sel{box-shadow:0 0 0 3px color-mix(in srgb,var(--ac) 35%,transparent)}.node.dim{opacity:.18}
+#panel{width:320px;background:var(--card);border-inline-start:1px solid var(--bd);padding:12px;overflow:auto;flex:none;display:none}
+#panel.on{display:block}#panel h2{font-size:16px;margin:0 0 6px}#panel label{display:block;font-size:12px;color:var(--mut);margin:10px 0 3px}
+.chip{display:inline-block;border:1px solid var(--bd);border-radius:20px;padding:2px 9px;margin:2px;cursor:pointer;font-size:12px}
+.badge{font-size:11px;padding:2px 8px;border-radius:10px;background:var(--ws);color:var(--mut)}
+.empty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--mut);text-align:center;padding:20px}
+#toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:var(--tx);color:var(--bg);padding:8px 14px;border-radius:8px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:9}
+#toast.on{opacity:1}.row{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+@media(max-width:800px){#side{position:absolute;z-index:5;inset:0 auto 0 0;height:100%;transform:translateX(-105%);transition:transform .2s}[dir=rtl] #side{inset:0 0 0 auto;transform:translateX(105%)}#side.on{transform:none}#panel{position:absolute;z-index:4;left:0;right:0;bottom:0;width:auto;max-height:62%;border-top:1px solid var(--bd)}#top input{width:100px}}
+</style></head><body>
+<div id="top"></div>
+<div id="main"><aside id="side"></aside><div id="ws"><div id="cv"></div></div><section id="panel"></section></div>
+<div id="toast" role="status"></div>
+<script>
+const T={en:{app:'LearnFlow Studio',courses:'My Learning Paths',search:'Search lessons',all:'All',done:'Completed',avail:'Available',lock:'Locked',prog:'In progress',complete:'Mark completed',reopen:'Reopen',start:'Start lesson',notes:'Personal notes',pre:'Prerequisites',next:'Unlocks',addL:'+ Lesson',addC:'+ New course',del:'Delete',confDel:'Delete this? This cannot be undone.',fit:'Fit',exp:'Export',imp:'Import',title:'Title',dur:'Duration (min)',desc:'Description',url:'Resource / video URL',open:'Open in new tab',cyc:'That would create a circular prerequisite.',none:'None',addPre:'Add prerequisite…',empty:'This course has no lessons yet. Use “+ Lesson” to add one.',sel:'Select a lesson to see details.',lessons:'lessons',overall:'Overall progress',remain:'Remaining',min:'min',bad:'Invalid file: ',replace:'Replace current data? OK = replace, Cancel = merge.',saved:'Saved',reset:'Restore sample data',confReset:'Replace all data with the sample content?',newT:'Title?',videoNote:'YouTube links are embedded when possible.',close:'Close',blocked:'If the video does not load, open it in a new tab.',total:'Courses',theme:'Theme'},
+ar:{app:'ليرن فلو ستوديو',courses:'مساراتي التعليمية',search:'ابحث في الدروس',all:'الكل',done:'مكتمل',avail:'متاح',lock:'مقفل',prog:'قيد التعلّم',complete:'تحديد كمكتمل',reopen:'إعادة فتح',start:'ابدأ الدرس',notes:'ملاحظاتي',pre:'المتطلبات السابقة',next:'يفتح الدروس',addL:'+ درس',addC:'+ مسار جديد',del:'حذف',confDel:'حذف هذا العنصر؟ لا يمكن التراجع.',fit:'ملاءمة',exp:'تصدير',imp:'استيراد',title:'العنوان',dur:'المدة (دقيقة)',desc:'الوصف',url:'رابط المورد / الفيديو',open:'فتح في تبويب جديد',cyc:'هذا سيُنشئ متطلبًا دائريًا.',none:'لا يوجد',addPre:'إضافة متطلب…',empty:'لا توجد دروس بعد. استخدم «+ درس» للإضافة.',sel:'اختر درسًا لعرض التفاصيل.',lessons:'دروس',overall:'التقدم الكلي',remain:'المتبقي',min:'د',bad:'ملف غير صالح: ',replace:'استبدال البيانات الحالية؟ موافق = استبدال، إلغاء = دمج.',saved:'تم الحفظ',reset:'استعادة البيانات التجريبية',confReset:'استبدال كل البيانات بالمحتوى التجريبي؟',newT:'العنوان؟',videoNote:'تُضمَّن روابط يوتيوب عند الإمكان.',close:'إغلاق',blocked:'إن لم يعمل الفيديو، افتحه في تبويب جديد.',total:'المسارات',theme:'المظهر'}};
+const $=s=>document.querySelector(s),esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])),uid=()=>Math.random().toString(36).slice(2,9);
+const mk=(title,color,ls)=>{const ids=ls.map(uid);return{id:uid(),title,color,lessons:ls.map((x,i)=>({id:ids[i],title:x[0],dur:x[1],pre:x[2].map(j=>ids[j]),desc:x[3]||'',note:'',url:'',done:false,prog:false}))}};
+const seed=()=>{const cs=[
+mk('Calculus and Integration','#3b6fd4',[['Introduction to integration',45,[],'Accumulation, antiderivatives and the idea behind the integral.'],['Indefinite integrals',60,[0],'Basic rules, substitution and the constant of integration.'],['Definite integrals',60,[0],'Riemann sums, limits and properties of definite integrals.'],['Fundamental Theorem of Calculus',50,[1,2],'Link between differentiation and integration.'],['Area under a curve',40,[3],'Compute areas using definite integrals.'],['Area between two curves',45,[4],'Set up and evaluate integrals between curves.'],['Volumes of revolution',60,[4],'Disk, washer and shell methods.'],['Surface area by integration',50,[6],'Surface area of solids of revolution.'],['Practice problems',90,[5,7],'Mixed problems covering the whole course.']]),
+mk('Frontend Development','#c2552d',[['HTML fundamentals',60,[]],['CSS layout',90,[0]],['JavaScript basics',120,[0]],['The DOM',60,[2]],['Responsive design',60,[1]],['React basics',120,[3,4]]]),
+mk('Backend Development','#7a4fc4',[['How the web works',40,[]],['Server language basics',90,[0]],['Databases and SQL',90,[1]],['REST APIs',80,[1,2]],['Authentication',60,[3]]]),
+mk('Python Programming','#2e9d6a',[['Syntax and variables',45,[]],['Control flow',45,[0]],['Functions',60,[1]],['Data structures',70,[1]],['Files and modules',50,[2,3]]]),
+mk('Electrical Engineering Mathematics','#b8860b',[['Complex numbers',60,[]],['Linear algebra',90,[]],['Differential equations',90,[0]],['Laplace transform',80,[2]],['Fourier series',80,[2,1]]])];
+return{v:1,courses:cs,cid:cs[0].id,lang:'en',theme:'auto'}};
+let st,sel=null,q='',flt='all',vw={x:40,y:40,k:1};
+try{st=JSON.parse(localStorage.getItem('lf'))}catch(e){}if(!st||!Array.isArray(st.courses))st=seed();
+const save=()=>{try{localStorage.setItem('lf',JSON.stringify(st))}catch(e){toast('Storage error')}};
+const t=k=>T[st.lang][k]||k,cur=()=>st.courses.find(c=>c.id===st.cid)||st.courses[0],gl=(c,id)=>c.lessons.find(l=>l.id===id);
+const stat=(c,l)=>l.done?'done':l.pre.every(p=>gl(c,p)?.done!==false)?(l.prog?'prog':'avail'):'lock';
+const pct=c=>c.lessons.length?Math.round(100*c.lessons.filter(l=>l.done).length/c.lessons.length):0;
+const dependsOn=(c,a,b,seen=new Set())=>{if(a===b)return true;if(seen.has(a))return false;seen.add(a);const l=gl(c,a);return !!l&&l.pre.some(p=>dependsOn(c,p,b,seen))};
+function layout(c){const m={},L=id=>{if(m[id]!==undefined)return m[id];m[id]=0;const l=gl(c,id);return m[id]=l&&l.pre.length?1+Math.max(...l.pre.map(L)):0},rows={},pos={};c.lessons.forEach(l=>L(l.id));c.lessons.forEach(l=>{const v=m[l.id];rows[v]=(rows[v]??-1)+1;pos[l.id]={x:v*250,y:rows[v]*100}});return pos}
+function toast(m){const e=$('#toast');e.textContent=m;e.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove('on'),1800)}
+function applyEnv(){const r=document.documentElement;r.lang=st.lang;r.dir=st.lang==='ar'?'rtl':'ltr';if(st.theme==='auto')r.removeAttribute('data-theme');else r.dataset.theme=st.theme}
+function head(){const c=cur();$('#top').innerHTML=`<button data-a="menu" aria-label="Menu">☰</button><h1>${esc(c.title)}</h1><input id="q" value="${esc(q)}" placeholder="${t('search')}" aria-label="${t('search')}"><select id="flt" aria-label="Filter">${['all','done','prog','avail','lock'].map(k=>`<option value="${k}" ${flt===k?'selected':''}>${t(k)}</option>`).join('')}</select><button data-a="zo" aria-label="Zoom out">−</button><button data-a="zi" aria-label="Zoom in">+</button><button data-a="fit">${t('fit')}</button><button class="pri" data-a="addL">${t('addL')}</button><button data-a="exp">${t('exp')}</button><button data-a="imp">${t('imp')}</button><button data-a="theme" aria-label="${t('theme')}">◐</button><button data-a="lang">${st.lang==='en'?'العربية':'EN'}</button>`}
+function side(){const all=st.courses.flatMap(c=>c.lessons),d=all.filter(l=>l.done),rem=all.filter(l=>!l.done).reduce((a,l)=>a+(+l.dur||0),0);
+$('#side').innerHTML=`<div class="brand">${t('app')}</div><div class="stat">${t('total')}: ${st.courses.length} · ${all.length} ${t('lessons')}<br>${t('done')}: ${d.length} · ${t('overall')}: ${all.length?Math.round(100*d.length/all.length):0}%<br>${t('remain')}: ${rem} ${t('min')}</div><b>${t('courses')}</b><div style="margin-top:8px">${st.courses.map(c=>`<div class="cc ${c.id===st.cid?'on':''}" style="--c:${esc(c.color)}" data-a="course" data-id="${c.id}" tabindex="0" role="button"><b>${esc(c.title)}</b><small>${c.lessons.length} ${t('lessons')} · ${pct(c)}%</small><div class="bar"><i style="width:${pct(c)}%"></i></div></div>`).join('')}</div><div class="row"><button data-a="addC">${t('addC')}</button><button class="dng" data-a="delC">${t('del')}</button><button data-a="reset">${t('reset')}</button></div>`}
+const match=(c,l)=>{const s=stat(c,l);const x=q.toLowerCase();return(flt==='all'||flt===s)&&(!x||(l.title+' '+l.desc).toLowerCase().includes(x))};
+function canvas(){const c=cur(),p=layout(c),cv=$('#cv');
+cv.innerHTML=(c.lessons.length?'':`<div class="empty" style="position:fixed">${t('empty')}</div>`)+`<svg width="1" height="1">${c.lessons.flatMap(l=>l.pre.filter(x=>p[x]).map(x=>{const a=p[x],b=p[l.id],x1=a.x+200,y1=a.y+32,x2=b.x,y2=b.y+32,m=(x1+x2)/2;return`<path d="M${x1} ${y1}C${m} ${y1} ${m} ${y2} ${x2} ${y2}" fill="none" stroke="${gl(c,x).done?'var(--ok)':'var(--lk)'}" stroke-width="2"/>`})).join('')}</svg>`+c.lessons.map(l=>{const s=stat(c,l);return`<div class="node ${s} ${sel===l.id?'sel':''} ${match(c,l)?'':'dim'}" data-a="node" data-id="${l.id}" tabindex="0" role="button" aria-label="${esc(l.title)}, ${t(s)}" style="left:${p[l.id].x}px;top:${p[l.id].y}px"><b>${s==='done'?'✓ ':s==='lock'?'🔒 ':''}${esc(l.title)}</b><small>${t(s)} · ${l.dur} ${t('min')}</small></div>`}).join('');setV()}
+const setV=()=>$('#cv').style.transform=`translate(${vw.x}px,${vw.y}px) scale(${vw.k})`;
+function fit(){const c=cur(),p=Object.values(layout(c)),ws=$('#ws');if(!p.length)return;const w=Math.max(...p.map(a=>a.x))+200,h=Math.max(...p.map(a=>a.y))+64,k=Math.min(1,(ws.clientWidth-40)/w,(ws.clientHeight-40)/h);vw={k,x:(ws.clientWidth-w*k)/2,y:(ws.clientHeight-h*k)/2};setV()}
+const ytEmbed=u=>{try{const x=new URL(u);let id=x.hostname.includes('youtu.be')?x.pathname.slice(1):x.hostname.includes('youtube.com')?(x.searchParams.get('v')||(x.pathname.startsWith('/embed/')?x.pathname.slice(7):'')):'';return /^[\w-]{6,15}$/.test(id)?'https://www.youtube.com/embed/'+id:''}catch(e){return''}};
+const safeUrl=u=>{try{return['http:','https:'].includes(new URL(u).protocol)?u:''}catch(e){return''}};
+function panel(){const c=cur(),l=sel&&gl(c,sel),P=$('#panel');P.classList.toggle('on',!!l||!c.lessons.length&&false);if(!l){P.classList.remove('on');return}
+const s=stat(c,l),u=safeUrl(l.url),em=ytEmbed(l.url),nx=c.lessons.filter(x=>x.pre.includes(l.id)),opts=c.lessons.filter(x=>x.id!==l.id&&!l.pre.includes(x.id)&&!dependsOn(c,x.id,l.id));
+P.innerHTML=`<div class="row" style="margin:0 0 8px;justify-content:space-between"><span class="badge">${t(s)}</span><button data-a="closeP" aria-label="${t('close')}">✕</button></div><h2>${esc(l.title)}</h2>
+${em?`<iframe src="${em}" style="width:100%;aspect-ratio:16/9;border:0;border-radius:8px" allowfullscreen title="video"></iframe><small>${t('blocked')}</small>`:''}
+${u?`<p><a href="${esc(u)}" target="_blank" rel="noopener noreferrer">${t('open')} ↗</a></p>`:''}
+<div class="row" style="margin-top:6px">${s==='done'?`<button data-a="reopen">${t('reopen')}</button>`:`<button class="pri" data-a="complete" ${s==='lock'?'disabled':''}>${t('complete')}</button>${s==='avail'?`<button data-a="start">${t('start')}</button>`:''}`}</div>
+<label>${t('title')}</label><input data-f="title" value="${esc(l.title)}"><label>${t('dur')}</label><input data-f="dur" type="number" min="1" value="${+l.dur||1}"><label>${t('desc')}</label><textarea data-f="desc" rows="3">${esc(l.desc)}</textarea><label>${t('url')}</label><input data-f="url" value="${esc(l.url)}" placeholder="https://"><label>${t('notes')}</label><textarea data-f="note" rows="4">${esc(l.note)}</textarea>
+<label>${t('pre')}</label>${l.pre.map(p=>`<span class="chip" data-a="rmPre" data-id="${p}">${esc(gl(c,p)?.title)} ✕</span>`).join('')||`<small>${t('none')}</small>`}<select id="addPre"><option value="">${t('addPre')}</option>${opts.map(o=>`<option value="${o.id}">${esc(o.title)}</option>`).join('')}</select>
+<label>${t('next')}</label>${nx.map(n=>`<span class="chip" data-a="node" data-id="${n.id}">${esc(n.title)}</span>`).join('')||`<small>${t('none')}</small>`}
+<div class="row"><button class="dng" data-a="delL">${t('del')}</button></div>`}
+function render(){applyEnv();head();side();canvas();panel()}
+function upd(){save();render()}
+document.addEventListener('click',e=>{const el=e.target.closest('[data-a]');if(!el)return;const a=el.dataset.a,id=el.dataset.id,c=cur(),l=sel&&gl(c,sel);
+if(a==='menu')$('#side').classList.toggle('on');
+else if(a==='course'){st.cid=id;sel=null;$('#side').classList.remove('on');save();render();fit()}
+else if(a==='node'){sel=id;render()}else if(a==='closeP'){sel=null;render()}
+else if(a==='zi'||a==='zo'){const ws=$('#ws'),f=a==='zi'?1.2:1/1.2,cx=ws.clientWidth/2,cy=ws.clientHeight/2;vw.x=cx-(cx-vw.x)*f;vw.y=cy-(cy-vw.y)*f;vw.k*=f;setV()}
+else if(a==='fit')fit();
+else if(a==='theme'){st.theme=document.documentElement.dataset.theme==='dark'||(st.theme==='auto'&&matchMedia('(prefers-color-scheme:dark)').matches)?'light':'dark';upd()}
+else if(a==='lang'){st.lang=st.lang==='en'?'ar':'en';upd()}
+else if(a==='addL'){const n=prompt(t('newT'));if(n&&n.trim()){const x={id:uid(),title:n.trim().slice(0,120),dur:30,pre:[],desc:'',note:'',url:'',done:false,prog:false};c.lessons.push(x);sel=x.id;upd();fit()}}
+else if(a==='addC'){const n=prompt(t('newT'));if(n&&n.trim()){const x={id:uid(),title:n.trim().slice(0,120),color:'#3b6fd4',lessons:[]};st.courses.push(x);st.cid=x.id;sel=null;upd()}}
+else if(a==='delC'){if(confirm(t('confDel'))){st.courses=st.courses.filter(x=>x.id!==c.id);if(!st.courses.length)st.courses.push({id:uid(),title:'New course',color:'#3b6fd4',lessons:[]});st.cid=st.courses[0].id;sel=null;upd();fit()}}
+else if(a==='delL'&&l){if(confirm(t('confDel'))){c.lessons=c.lessons.filter(x=>x.id!==l.id);c.lessons.forEach(x=>x.pre=x.pre.filter(p=>p!==l.id));sel=null;upd()}}
+else if(a==='complete'&&l){l.done=true;l.prog=false;l.doneAt=Date.now();upd();toast(t('saved'))}
+else if(a==='reopen'&&l){l.done=false;delete l.doneAt;upd()}else if(a==='start'&&l){l.prog=true;upd()}
+else if(a==='rmPre'&&l){l.pre=l.pre.filter(p=>p!==id);upd()}
+else if(a==='reset'){if(confirm(t('confReset'))){const l0=st.lang,th=st.theme;st=seed();st.lang=l0;st.theme=th;sel=null;upd();fit()}}
+else if(a==='exp'){const b=new Blob([JSON.stringify(st,null,2)],{type:'application/json'}),x=document.createElement('a');x.href=URL.createObjectURL(b);x.download='learnflow-backup.json';x.click();setTimeout(()=>URL.revokeObjectURL(x.href),1000)}
+else if(a==='imp'){const i=document.createElement('input');i.type='file';i.accept='.json';i.onchange=()=>i.files[0]?.text().then(imp);i.click()}});
+function imp(txt){try{const d=JSON.parse(txt);if(!d||!Array.isArray(d.courses))throw'courses[]';const cs=d.courses.map((c,i)=>{if(typeof c.id!=='string'||typeof c.title!=='string'||!Array.isArray(c.lessons))throw'course #'+(i+1);const ids=new Set(c.lessons.map(l=>l&&l.id));return{id:c.id,title:c.title.slice(0,120),color:/^#[0-9a-f]{6}$/i.test(c.color)?c.color:'#3b6fd4',lessons:c.lessons.map((l,j)=>{if(!l||typeof l.id!=='string'||typeof l.title!=='string')throw'lesson #'+(j+1)+' in '+c.title;return{id:l.id,title:l.title,dur:Math.max(1,+l.dur||1),pre:(Array.isArray(l.pre)?l.pre:[]).filter(p=>ids.has(p)&&p!==l.id),desc:String(l.desc||''),note:String(l.note||''),url:String(l.url||''),done:!!l.done,prog:!!l.prog}})}});
+if(confirm(t('replace'))){st.courses=cs;st.cid=cs[0]?.id}else{const have=new Set(st.courses.map(c=>c.id));cs.forEach(c=>{if(!have.has(c.id))st.courses.push(c)})}
+if(!st.courses.length)st=seed();sel=null;upd();fit();toast(t('saved'))}catch(e){alert(t('bad')+e)}}
+document.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target.matches('[data-a=node],[data-a=course]')){e.preventDefault();e.target.click()}});
+document.addEventListener('input',e=>{if(e.target.id==='q'){q=e.target.value;canvas()}});
+document.addEventListener('change',e=>{const c=cur(),l=sel&&gl(c,sel),el=e.target;
+if(el.id==='flt'){flt=el.value;canvas()}
+else if(el.id==='addPre'&&l&&el.value){if(dependsOn(c,el.value,l.id)){toast(t('cyc'))}else l.pre.push(el.value);upd()}
+else if(el.dataset.f&&l){l[el.dataset.f]=el.dataset.f==='dur'?Math.max(1,+el.value||1):el.value.trim()===''&&el.dataset.f==='title'?l.title:el.value;upd()}});
+const ws=$('#ws');let drag=null;
+ws.addEventListener('pointerdown',e=>{if(e.target.closest('.node'))return;drag={x:e.clientX-vw.x,y:e.clientY-vw.y};ws.setPointerCapture(e.pointerId);ws.style.cursor='grabbing'});
+ws.addEventListener('pointermove',e=>{if(drag){vw.x=e.clientX-drag.x;vw.y=e.clientY-drag.y;setV()}});
+ws.addEventListener('pointerup',()=>{drag=null;ws.style.cursor=''});
+ws.addEventListener('wheel',e=>{e.preventDefault();const r=ws.getBoundingClientRect(),f=e.deltaY<0?1.1:1/1.1,px=e.clientX-r.left,py=e.clientY-r.top;vw.x=px-(px-vw.x)*f;vw.y=py-(py-vw.y)*f;vw.k=Math.min(2,Math.max(.2,vw.k*f));setV()},{passive:false});
+render();fit();addEventListener('resize',fit);
+</script></body></html>
